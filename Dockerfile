@@ -9,5 +9,4 @@ RUN sudo apt-get -y install \
   binutils \
   libc6-dev
 
-RUN mkdir /xcc
-
+WORKDIR /xcc

@@ -1,5 +1,5 @@
 xcc: xcc.c
-	echo "TODO: build"
+	docker run -it --rm -v $(PWD):/xcc xcc:local gcc -o xcc xcc.c
 
 test: xcc
 	echo "TODO: test target"
@@ -10,7 +10,7 @@ docker-build: Dockerfile
 
 .PHONY: run
 run: docker-build
-	docker run -it --rm --name xcc -v $(PWD):/xcc xcc:local
+	docker run -it --rm -v $(PWD):/xcc xcc:local
 
 clean:
-	rm -f xcc *.o *~ tmp*
+	@rm -f xcc *.o *~ tmp*
