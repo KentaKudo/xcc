@@ -92,6 +92,50 @@ int consume(int ty) {
   return 1;
 }
 
+Node *expr();
+Node *mul();
+Node *term();
+
+Node *expr() {
+  Node *node = mul();
+  
+  for (;;) {
+    if (consume('+'))
+      node = new_node('+', node, mul());
+    else if (consume('-'))
+      node = new_node('-', node, mul());
+    else
+      return node;
+  }
+}
+
+Node *mul() {
+  Node *node = term();
+
+  for (;;) {
+    if (consume('*'))
+      node = new_node('*', node, term());
+    else if (consume('/'))
+      node = new_node('/', node, term());
+    else
+      return node;
+  }
+}
+
+Node *term() {
+  if (consume('(')) {
+    Node *node = expr();
+    if (!consume(')'))
+      error("expecting ')': %s", tokens[pos].input);
+    return node;
+  }
+
+  if (tokens[pos].ty == TK_NUM)
+    return new_node_num(tokens[pos++].val);
+  
+  error("expecting a number or '(': %s", tokens[pos].input);
+}
+
 int main(int argc, char **argv) {
   if (argc != 2) {
     fprintf(stderr, "invalid number of arguments\n");
