@@ -84,6 +84,14 @@ Node *new_node_num(int val) {
   return node;
 }
 
+int pos = 0;
+int consume(int ty) {
+  if (tokens[pos].ty != ty)
+    return 0;
+  pos++;
+  return 1;
+}
+
 int main(int argc, char **argv) {
   if (argc != 2) {
     fprintf(stderr, "invalid number of arguments\n");
