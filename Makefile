@@ -2,7 +2,7 @@ xcc: xcc.c
 	docker run -it --rm -v $(PWD):/xcc xcc:local gcc -o xcc xcc.c
 
 test: xcc
-	echo "TODO: test target"
+	docker run -it --rm -v $(PWD):/xcc xcc:local ./test.sh
 
 .PHONY: docker-build
 docker-build: Dockerfile
