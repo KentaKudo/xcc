@@ -58,6 +58,17 @@ void tokenise(char *p) {
   tokens[i].input = p;
 }
 
+enum {
+  ND_NUM = 256,
+};
+
+typedef struct Node {
+  int ty;
+  struct Node *lhs;
+  struct Node *rhs;
+  int val;
+} Node;
+
 int main(int argc, char **argv) {
   if (argc != 2) {
     fprintf(stderr, "invalid number of arguments\n");
