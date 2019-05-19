@@ -6,6 +6,10 @@
 
 // the type of tokens
 enum {
+  TK_EQ  = 100, // ==
+  TK_NE  = 101, // !=
+  TK_LE  = 102, // <=
+  TK_GE  = 103, // >=
   TK_NUM = 256, // integer
   TK_EOF,       // the end of input
 };
@@ -31,6 +35,38 @@ void tokenise(char *p) {
   while (*p) {
     if (isspace(*p)) {
       p++;
+      continue;
+    }
+
+    if (strncmp(p, "==", 2)) {
+      tokens[i].ty = TK_EQ;
+      tokens[i].input = "==";
+      i++;
+      p++; p++;
+      continue;
+    }
+
+    if (strncmp(p, "!=", 2)) {
+      tokens[i].ty = TK_NE;
+      tokens[i].input = "!=";
+      i++;
+      p++; p++;
+      continue;
+    }
+
+    if (strncmp(p, "<=", 2)) {
+      tokens[i].ty = TK_LE;
+      tokens[i].input = "<=";
+      i++;
+      p++; p++;
+      continue;
+    }
+
+    if (strncmp(p, ">=", 2)) {
+      tokens[i].ty = TK_GE;
+      tokens[i].input = ">=";
+      i++;
+      p++; p++;
       continue;
     }
 
