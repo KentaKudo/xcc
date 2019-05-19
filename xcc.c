@@ -42,7 +42,7 @@ typedef struct {
   char *input; // for error message
 } Token;
 
-Token tokens[100];
+Vector *tokens;
 
 void error(char *fmt, ...) {
   va_list ap;
@@ -60,34 +60,36 @@ void tokenise(char *p) {
       continue;
     }
 
+    Token *tok = malloc(sizeof(Token));
+
     if (strncmp(p, "==", 2) == 0) {
-      tokens[i].ty = TK_EQ;
-      tokens[i].input = "==";
-      i++;
+      tok->ty = TK_EQ;
+      tok->input = "==";
+      vec_push(tokens, (void *)tok);
       p++; p++;
       continue;
     }
 
     if (strncmp(p, "!=", 2) == 0) {
-      tokens[i].ty = TK_NE;
-      tokens[i].input = "!=";
-      i++;
+      tok->ty = TK_NE;
+      tok->input = "!=";
+      vec_push(tokens, (void *)tok);
       p++; p++;
       continue;
     }
 
     if (strncmp(p, "<=", 2) == 0) {
-      tokens[i].ty = TK_LE;
-      tokens[i].input = "<=";
-      i++;
+      tok->ty = TK_LE;
+      tok->input = "<=";
+      vec_push(tokens, (void *)tok);
       p++; p++;
       continue;
     }
 
     if (strncmp(p, ">=", 2) == 0) {
-      tokens[i].ty = TK_GE;
-      tokens[i].input = ">=";
-      i++;
+      tok->ty = TK_GE;
+      tok->input = ">=";
+      vec_push(tokens, (void *)tok);
       p++; p++;
       continue;
     }
@@ -96,18 +98,18 @@ void tokenise(char *p) {
       *p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')' ||
       *p == '<' || *p == '>'
     ) {
-      tokens[i].ty = *p;
-      tokens[i].input = p;
-      i++;
+      tok->ty = *p;
+      tok->input = p;
+      vec_push(tokens, (void *)tok);
       p++;
       continue;
     }
 
     if (isdigit(*p)) {
-      tokens[i].ty = TK_NUM;
-      tokens[i].input = p;
-      tokens[i].val = strtol(p, &p, 10);
-      i++;
+      tok->ty = TK_NUM;
+      tok->input = p;
+      tok->val = strtol(p, &p, 10);
+      vec_push(tokens, (void *)tok);
       continue;
     }
 
@@ -115,8 +117,10 @@ void tokenise(char *p) {
     exit(1);
   }
 
-  tokens[i].ty = TK_EOF;
-  tokens[i].input = p;
+  Token *tok = malloc(sizeof(Token));
+  tok->ty = TK_EOF;
+  tok->input = p;
+  vec_push(tokens, (void *)tok);
 }
 
 enum {
@@ -151,7 +155,8 @@ Node *new_node_num(int val) {
 
 int pos = 0;
 int consume(int ty) {
-  if (tokens[pos].ty != ty)
+  Token *tok = tokens->data[pos];
+  if (tok->ty != ty)
     return 0;
   pos++;
   return 1;
@@ -238,14 +243,14 @@ Node *term() {
   if (consume('(')) {
     Node *node = expr();
     if (!consume(')'))
-      error("expecting ')': %s", tokens[pos].input);
+      error("expecting ')': %s", ((Token *)tokens->data[pos])->input);
     return node;
   }
 
-  if (tokens[pos].ty == TK_NUM)
-    return new_node_num(tokens[pos++].val);
+  if (((Token *)tokens->data[pos])->ty == TK_NUM)
+    return new_node_num(((Token *)tokens->data[pos++])->val);
   
-  error("expecting a number or '(': %s", tokens[pos].input);
+  error("expecting a number or '(': %s", ((Token *)tokens->data[pos])->input);
 }
 
 void gen(Node *node) {
@@ -345,6 +350,7 @@ int main(int argc, char **argv) {
     return 0;
   }
 
+  tokens = new_vector();
   tokenise(argv[1]);
   Node *node = expr();
 
