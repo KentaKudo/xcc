@@ -15,6 +15,28 @@ enum {
 };
 
 typedef struct {
+  void **data;
+  int capacity;
+  int len;
+} Vector;
+
+Vector *new_vector() {
+  Vector *vec = malloc(sizeof(Vector));
+  vec->data = malloc(sizeof(void *) * 16);
+  vec->capacity = 16;
+  vec->len = 0;
+  return vec;
+}
+
+void vec_push(Vector *vec, void *elem) {
+  if (vec->capacity == vec->len) {
+    vec->capacity *= 2;
+    vec->data = realloc(vec->data, sizeof(void *) * vec->capacity);
+  }
+  vec->data[vec->len++] = elem;
+}
+
+typedef struct {
   int ty;      // type
   int val;     // value
   char *input; // for error message
@@ -287,10 +309,40 @@ void gen(Node *node) {
   printf("  push rax\n");
 }
 
+void expect(int line, int expected, int actual);
+void runtest();
+
+void expect(int line, int expected, int actual) {
+  if (expected == actual)
+    return;
+  fprintf(stderr, "%d: %d expected, got %d\n", line, expected, actual);
+  exit(1);
+}
+
+void runtest() {
+  Vector *vec = new_vector();
+  expect(__LINE__, 0, vec->len);
+
+  for (int i = 0; i < 100; i++)
+    vec_push(vec, (void *)i);
+
+  expect(__LINE__, 100, vec->len);
+  expect(__LINE__, 0, (long)vec->data[0]);
+  expect(__LINE__, 50, (long)vec->data[50]);
+  expect(__LINE__, 99, (long)vec->data[99]);
+
+  printf("OK\n");
+}
+
 int main(int argc, char **argv) {
   if (argc != 2) {
     fprintf(stderr, "invalid number of arguments\n");
     return 1;
+  }
+
+  if (strncmp(argv[1], "-test", 5) == 0) {
+    runtest();
+    return 0;
   }
 
   tokenise(argv[1]);
@@ -306,4 +358,3 @@ int main(int argc, char **argv) {
   printf("  ret\n");
   return 0;
 }
-

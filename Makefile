@@ -7,6 +7,7 @@ docker-build: Dockerfile
 
 .PHONY: test
 test: xcc docker-build
+	docker run -it --rm -v $(PWD):/xcc xcc:local ./xcc -test
 	docker run -it --rm -v $(PWD):/xcc xcc:local ./test.sh
 
 .PHONY: run
