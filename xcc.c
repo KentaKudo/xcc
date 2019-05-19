@@ -95,6 +95,10 @@ void tokenise(char *p) {
 }
 
 enum {
+  ND_EQ  = 100,
+  ND_NE  = 101,
+  ND_LE  = 102,
+  ND_GE  = 103,
   ND_NUM = 256,
 };
 
@@ -129,11 +133,36 @@ int consume(int ty) {
 }
 
 Node *expr();
+Node *equality();
+Node *relational();
+Node *add();
 Node *mul();
 Node *unary();
 Node *term();
 
 Node *expr() {
+  Node *node = equality();
+  return node;
+}
+
+Node *equality() {
+  Node *node = relational();
+
+  for (;;) {
+    if (consume(ND_EQ))
+      node = new_node(ND_EQ, node, relational());
+    if (consume(ND_NE))
+      node = new_node(ND_NE, node, relational());
+    else
+      return node;
+  }
+}
+
+Node *relational() {
+
+}
+
+Node *add() {
   Node *node = mul();
   
   for (;;) {
