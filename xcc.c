@@ -159,7 +159,16 @@ Node *equality() {
 }
 
 Node *relational() {
+  Node *node = add();
 
+  for (;;) {
+    if (consume(ND_LE))
+      node = new_node(ND_LE, node, add());
+    if (consume(ND_GE))
+      node = new_node(ND_GE, node, add());
+    else
+      return node;
+  }
 }
 
 Node *add() {
