@@ -38,7 +38,7 @@ void tokenise(char *p) {
       continue;
     }
 
-    if (strncmp(p, "==", 2)) {
+    if (strncmp(p, "==", 2) == 0) {
       tokens[i].ty = TK_EQ;
       tokens[i].input = "==";
       i++;
@@ -46,7 +46,7 @@ void tokenise(char *p) {
       continue;
     }
 
-    if (strncmp(p, "!=", 2)) {
+    if (strncmp(p, "!=", 2) == 0) {
       tokens[i].ty = TK_NE;
       tokens[i].input = "!=";
       i++;
@@ -54,7 +54,7 @@ void tokenise(char *p) {
       continue;
     }
 
-    if (strncmp(p, "<=", 2)) {
+    if (strncmp(p, "<=", 2) == 0) {
       tokens[i].ty = TK_LE;
       tokens[i].input = "<=";
       i++;
@@ -62,7 +62,7 @@ void tokenise(char *p) {
       continue;
     }
 
-    if (strncmp(p, ">=", 2)) {
+    if (strncmp(p, ">=", 2) == 0) {
       tokens[i].ty = TK_GE;
       tokens[i].input = ">=";
       i++;
@@ -251,6 +251,36 @@ void gen(Node *node) {
   case '/':
     printf("  cqo\n");
     printf("  idiv rdi\n");
+    break;
+  case ND_EQ:
+    printf("  cmp rax, rdi\n");
+    printf("  sete al\n");
+    printf("  movzb rax, al\n");
+    break;
+  case ND_NE:
+    printf("  cmp rax, rdi\n");
+    printf("  setne al\n");
+    printf("  movzb rax, al\n");
+    break;
+  case '<':
+    printf("  cmp rax, rdi\n");
+    printf("  setl al\n");
+    printf("  movzb rax, al\n");
+    break;
+  case ND_LE:
+    printf("  cmp rax, rdi\n");
+    printf("  setle al\n");
+    printf("  movzb rax, al\n");
+    break;
+  case '>':
+    printf("  cmp rdi, rax\n");
+    printf("  setl al\n");
+    printf("  movzb rax, al\n");
+    break;
+  case ND_GE:
+    printf("  cmp rdi, rax\n");
+    printf("  setle al\n");
+    printf("  movzb rax, al\n");
     break;
   }
 
