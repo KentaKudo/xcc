@@ -1,18 +1,31 @@
-xcc: xcc.c
-	docker run -it --rm -v $(PWD):/xcc xcc:local gcc -o xcc xcc.c
+CC=gcc
+CFLAGS=-Wall -std=c11
+SRCS=$(wildcard *.c)
+OBJS=$(SRCS:.c=.o)
+
+xcc: $(OBJS)
+	$(CC) $^ -o $@ $(CFLAGS)
+
+$(OBJS): xcc.h
+
+.PHONY: test
+test: xcc test.sh
+	./xcc -test
+	./test.sh
 
 .PHONY: docker-build
 docker-build: Dockerfile
 	docker build -t xcc:local .
 
-.PHONY: test
-test: xcc docker-build
-	docker run -it --rm -v $(PWD):/xcc xcc:local ./xcc -test
-	docker run -it --rm -v $(PWD):/xcc xcc:local ./test.sh
-
 .PHONY: run
 run: docker-build
 	docker run -it --rm -v $(PWD):/xcc xcc:local
+
+host-build: docker-build
+	docker run --rm -v $(PWD):/xcc xcc:local make xcc
+
+host-test: docker-build host-build
+	docker run --rm -v $(PWD):/xcc xcc:local make test
 
 clean:
 	@rm -f xcc *.o *~ tmp*
