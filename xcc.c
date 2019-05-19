@@ -70,7 +70,10 @@ void tokenise(char *p) {
       continue;
     }
 
-    if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')') {
+    if (
+      *p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')' ||
+      *p == '<' || *p == '>'
+    ) {
       tokens[i].ty = *p;
       tokens[i].input = p;
       i++;
@@ -162,8 +165,12 @@ Node *relational() {
   Node *node = add();
 
   for (;;) {
+    if (consume('<'))
+      node = new_node('<', node, add());
     if (consume(ND_LE))
       node = new_node(ND_LE, node, add());
+    if (consume('>'))
+      node = new_node('>', node, add());
     if (consume(ND_GE))
       node = new_node(ND_GE, node, add());
     else
