@@ -21,6 +21,11 @@ typedef struct {
   int len;
 } Vector;
 
+typedef struct {
+  Vector *keys;
+  Vector *vals;
+} Map;
+
 extern Vector *tokens;
 extern Vector *code;
 extern int pos;
@@ -72,7 +77,12 @@ void gen(Node *node);
 // container.c
 Vector *new_vector();
 void vec_push(Vector *vec, void *elem);
+Map *new_map();
+void map_put(Map *map, char *key, void *val);
+void *map_get(Map *map, char *key);
 int is_alnum(char c);
 void error(char *fmt, ...);
 void expect(int line, int expected, int actual);
+void test_vector();
+void test_map();
 void runtest();
