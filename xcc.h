@@ -32,7 +32,6 @@ typedef struct {
 enum {
   ND_NUM = 256,
   ND_IDENT,
-  ND_EOF,
   ND_EQ,
   ND_NE,
   ND_LE,
