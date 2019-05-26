@@ -46,7 +46,7 @@ void tokenise(char *p) {
 
     if (
       *p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')' ||
-      *p == '<' || *p == '>'
+      *p == '<' || *p == '>' || *p == '=' || *p == ';'
     ) {
       tok->ty = *p;
       tok->input = p;
@@ -60,6 +60,14 @@ void tokenise(char *p) {
       tok->input = p;
       tok->val = strtol(p, &p, 10);
       vec_push(tokens, (void *)tok);
+      continue;
+    }
+
+    if ('a' <= *p && *p <= 'z') {
+      tok->ty = TK_IDENT;
+      tok->input = p;
+      vec_push(tokens, (void *)tok);
+      p++;
       continue;
     }
 
@@ -88,6 +96,13 @@ Node *new_node_num(int val) {
   return node;
 }
 
+Node *new_node_ident(char name) {
+  Node *node = malloc(sizeof(Node));
+  node->ty = ND_IDENT;
+  node->name = name;
+  return node;
+}
+
 int pos = 0;
 int consume(int ty) {
   Token *tok = tokens->data[pos];
@@ -97,8 +112,29 @@ int consume(int ty) {
   return 1;
 }
 
+Node *code[100];
+void program() {
+  int i = 0;
+  while (((Token *)tokens->data[pos])->ty != TK_EOF)
+    code[i++] = stmt();
+  code[i] = NULL;
+}
+
+Node *stmt() {
+  Node *node = expr();
+  if (!consume(';'))
+    error("expecting ';': %s", ((Token *)tokens->data[pos])->input);
+  return node;
+}
+
 Node *expr() {
+  return assign();
+}
+
+Node *assign() {
   Node *node = equality();
+  if (consume('='))
+    node = new_node('=', node, assign());
   return node;
 }
 
@@ -176,6 +212,11 @@ Node *term() {
 
   if (((Token *)tokens->data[pos])->ty == TK_NUM)
     return new_node_num(((Token *)tokens->data[pos++])->val);
+
+  if (((Token *)tokens->data[pos])->ty == TK_IDENT) {
+    char *input = ((Token *)tokens->data[pos++])->input;
+    return new_node_ident(*input);
+  }
   
   error("expecting a number or '(': %s", ((Token *)tokens->data[pos])->input);
 }

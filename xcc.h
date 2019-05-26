@@ -6,6 +6,7 @@
 
 enum {
   TK_NUM = 256, // integer
+  TK_IDENT,     // identifier
   TK_EOF,       // the end of input
   TK_EQ,        // ==
   TK_NE,        // !=
@@ -30,6 +31,7 @@ typedef struct {
 
 enum {
   ND_NUM = 256,
+  ND_IDENT,
   ND_EOF,
   ND_EQ,
   ND_NE,
@@ -42,14 +44,21 @@ typedef struct Node {
   struct Node *lhs;
   struct Node *rhs;
   int val;
+  char name;
 } Node;
+
+extern Node *code[100];
 
 // parse.c
 void tokenise(char *p);
 Node *new_node(int ty, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
+Node *new_node_ident(char name);
 int consume(int ty);
+void program();
+Node *stmt();
 Node *expr();
+Node *assign();
 Node *equality();
 Node *relational();
 Node *add();
