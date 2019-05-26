@@ -1,94 +1,5 @@
 #include "xcc.h"
 
-Vector *tokens;
-
-void tokenise(char *p) {
-  tokens = new_vector();
-  while (*p) {
-    if (isspace(*p)) {
-      p++;
-      continue;
-    }
-
-    Token *tok = malloc(sizeof(Token));
-
-    if (strncmp(p, "return", 6) == 0 && !is_alnum(p[6])) {
-      tok->ty = TK_RETURN;
-      tok->input = p;
-      vec_push(tokens, (void *)tok);
-      p += 6;
-      continue;
-    }
-
-    if (strncmp(p, "==", 2) == 0) {
-      tok->ty = TK_EQ;
-      tok->input = "==";
-      vec_push(tokens, (void *)tok);
-      p++; p++;
-      continue;
-    }
-
-    if (strncmp(p, "!=", 2) == 0) {
-      tok->ty = TK_NE;
-      tok->input = "!=";
-      vec_push(tokens, (void *)tok);
-      p++; p++;
-      continue;
-    }
-
-    if (strncmp(p, "<=", 2) == 0) {
-      tok->ty = TK_LE;
-      tok->input = "<=";
-      vec_push(tokens, (void *)tok);
-      p++; p++;
-      continue;
-    }
-
-    if (strncmp(p, ">=", 2) == 0) {
-      tok->ty = TK_GE;
-      tok->input = ">=";
-      vec_push(tokens, (void *)tok);
-      p++; p++;
-      continue;
-    }
-
-    if (
-      *p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')' ||
-      *p == '<' || *p == '>' || *p == '=' || *p == ';'
-    ) {
-      tok->ty = *p;
-      tok->input = p;
-      vec_push(tokens, (void *)tok);
-      p++;
-      continue;
-    }
-
-    if (isdigit(*p)) {
-      tok->ty = TK_NUM;
-      tok->input = p;
-      tok->val = strtol(p, &p, 10);
-      vec_push(tokens, (void *)tok);
-      continue;
-    }
-
-    if ('a' <= *p && *p <= 'z') {
-      tok->ty = TK_IDENT;
-      tok->input = p;
-      vec_push(tokens, (void *)tok);
-      p++;
-      continue;
-    }
-
-    error("untokenisable: %s", p);
-    exit(1);
-  }
-
-  Token *tok = malloc(sizeof(Token));
-  tok->ty = TK_EOF;
-  tok->input = p;
-  vec_push(tokens, (void *)tok);
-}
-
 Node *new_node(int ty, Node *lhs, Node *rhs) {
   Node *node = malloc(sizeof(Node));
   node->ty = ty;
@@ -104,7 +15,7 @@ Node *new_node_num(int val) {
   return node;
 }
 
-Node *new_node_ident(char name) {
+Node *new_node_ident(char *name) {
   Node *node = malloc(sizeof(Node));
   node->ty = ND_IDENT;
   node->name = name;
@@ -128,8 +39,12 @@ int consume(int ty) {
 }
 
 Vector *code;
+Map *offsets;
+int varCnt = 0;
+
 void program() {
   code = new_vector();
+  offsets = new_map();
   while (((Token *)tokens->data[pos])->ty != TK_EOF) {
     vec_push(code, (void *) stmt());
   }
@@ -237,8 +152,14 @@ Node *term() {
     return new_node_num(((Token *)tokens->data[pos++])->val);
 
   if (((Token *)tokens->data[pos])->ty == TK_IDENT) {
-    char *input = ((Token *)tokens->data[pos++])->input;
-    return new_node_ident(*input);
+    char *name = ((Token *)tokens->data[pos++])->name;
+    void *val = map_get(offsets, name);
+    if (val == NULL) {
+      map_put(offsets, name, varCnt * 8);
+      varCnt++;
+    }
+
+    return new_node_ident(name);
   }
   
   error("expecting a number or '(': %s", ((Token *)tokens->data[pos])->input);

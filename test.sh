@@ -34,6 +34,8 @@ try 1 "10 >= 8;"
 try 33 "42; 33;"
 try 14 "a = 3; b = 5 * 6 - 8; a + b / 2;"
 try 5 "return 5; return 8;"
+try 6 "foo = 1; bar = 2 + 3; return foo + bar;"
+try 6 "foo1 = 1; foo2 = 2 + 3; return foo1 + foo2;"
 
 echo OK
 

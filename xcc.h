@@ -29,10 +29,13 @@ typedef struct {
 extern Vector *tokens;
 extern Vector *code;
 extern int pos;
+extern int varCnt;
+extern Map *offsets;
 
 typedef struct {
   int ty;      // type
-  int val;     // value
+  int val;     // value if ty == TK_NUM
+  char *name;  // name if ty == TK_IDENT
   char *input; // for error message
 } Token;
 
@@ -51,14 +54,14 @@ typedef struct Node {
   struct Node *lhs;
   struct Node *rhs;
   int val;
-  char name;
+  char *name;
 } Node;
 
 // parse.c
 void tokenise(char *p);
 Node *new_node(int ty, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
-Node *new_node_ident(char name);
+Node *new_node_ident(char *name);
 int consume(int ty);
 void program();
 Node *stmt();

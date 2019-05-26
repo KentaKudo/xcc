@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
   // prologue
   printf("  push rbp\n");
   printf("  mov rbp, rsp\n");
-  printf("  sub rsp, 208\n");
+  printf("  sub rsp, %d\n", varCnt * 8);
 
   for (int i = 0; i < code->len; i++) {
     gen((Node *)code->data[i]);
