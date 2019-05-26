@@ -22,6 +22,7 @@ typedef struct {
 } Vector;
 
 extern Vector *tokens;
+extern Vector *code;
 extern int pos;
 
 typedef struct {
@@ -47,8 +48,6 @@ typedef struct Node {
   int val;
   char name;
 } Node;
-
-extern Node *code[100];
 
 // parse.c
 void tokenise(char *p);

@@ -127,12 +127,12 @@ int consume(int ty) {
   return 1;
 }
 
-Node *code[100];
+Vector *code;
 void program() {
-  int i = 0;
-  while (((Token *)tokens->data[pos])->ty != TK_EOF)
-    code[i++] = stmt();
-  code[i] = NULL;
+  code = new_vector();
+  while (((Token *)tokens->data[pos])->ty != TK_EOF) {
+    vec_push(code, (void *) stmt());
+  }
 }
 
 Node *stmt() {
@@ -146,6 +146,7 @@ Node *stmt() {
 
   if (!consume(';'))
     error("expecting ';': %s", ((Token *)tokens->data[pos])->input);
+
   return node;
 }
 
