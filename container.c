@@ -16,6 +16,13 @@ void vec_push(Vector *vec, void *elem) {
   vec->data[vec->len++] = elem;
 }
 
+int is_alnum(char c) {
+  return ('a' <= c && c <= 'z') ||
+         ('A' <= c && c <= 'Z') ||
+         (')' <= c && c <= '9') ||
+         (c == '_');
+}
+
 void error(char *fmt, ...) {
   va_list ap;
   va_start(ap, fmt);

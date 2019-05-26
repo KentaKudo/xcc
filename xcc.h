@@ -12,6 +12,7 @@ enum {
   TK_NE,        // !=
   TK_LE,        // <=
   TK_GE,        // >=
+  TK_RETURN,    // return
 };
 
 typedef struct {
@@ -36,6 +37,7 @@ enum {
   ND_NE,
   ND_LE,
   ND_GE,
+  ND_RETURN,
 };
 
 typedef struct Node {
@@ -71,6 +73,7 @@ void gen(Node *node);
 // container.c
 Vector *new_vector();
 void vec_push(Vector *vec, void *elem);
+int is_alnum(char c);
 void error(char *fmt, ...);
 void expect(int line, int expected, int actual);
 void runtest();

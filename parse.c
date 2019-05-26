@@ -12,6 +12,14 @@ void tokenise(char *p) {
 
     Token *tok = malloc(sizeof(Token));
 
+    if (strncmp(p, "return", 6) == 0 && !is_alnum(p[6])) {
+      tok->ty = TK_RETURN;
+      tok->input = p;
+      vec_push(tokens, (void *)tok);
+      p += 6;
+      continue;
+    }
+
     if (strncmp(p, "==", 2) == 0) {
       tok->ty = TK_EQ;
       tok->input = "==";
@@ -103,6 +111,13 @@ Node *new_node_ident(char name) {
   return node;
 }
 
+Node *new_node_return(Node *lhs) {
+  Node *node = malloc(sizeof(Node));
+  node->ty = ND_RETURN;
+  node->lhs = lhs;
+  return node;
+}
+
 int pos = 0;
 int consume(int ty) {
   Token *tok = tokens->data[pos];
@@ -121,7 +136,14 @@ void program() {
 }
 
 Node *stmt() {
-  Node *node = expr();
+  Node *node;
+
+  if (consume(TK_RETURN)) {
+    node = new_node_return(expr());
+  } else {
+    node = expr();
+  }
+
   if (!consume(';'))
     error("expecting ';': %s", ((Token *)tokens->data[pos])->input);
   return node;
