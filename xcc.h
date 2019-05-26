@@ -5,12 +5,12 @@
 #include <string.h>
 
 enum {
-  TK_EQ  = 100, // ==
-  TK_NE  = 101, // !=
-  TK_LE  = 102, // <=
-  TK_GE  = 103, // >=
   TK_NUM = 256, // integer
   TK_EOF,       // the end of input
+  TK_EQ,        // ==
+  TK_NE,        // !=
+  TK_LE,        // <=
+  TK_GE,        // >=
 };
 
 typedef struct {
@@ -29,11 +29,12 @@ typedef struct {
 } Token;
 
 enum {
-  ND_EQ  = 100,
-  ND_NE  = 101,
-  ND_LE  = 102,
-  ND_GE  = 103,
   ND_NUM = 256,
+  ND_EOF,
+  ND_EQ,
+  ND_NE,
+  ND_LE,
+  ND_GE,
 };
 
 typedef struct Node {
