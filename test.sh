@@ -42,5 +42,9 @@ try 33 "a = 0; if (a == 1) return 42; else return 33;"
 try 5 "a = 0; while (a < 5) a = a + 1; return a;"
 try 5 "a = 0; for (; a < 5;) a = a + 1; return a;"
 try 15 "a = 0; for (i = 0; i < 5; i = i + 1) a = a + 3; return a;"
+try 33 "{ 42; 22; } { 33; }"
+try 33 "a = 0; if (a == 1) { return 42; } else { return 33; }"
+try 5 "a = 0; while (a < 5) { a = a + 1; } return a;"
+try 5 "a = 0; for (; a < 5;) { a = a + 1; } return a;"
 
 echo OK

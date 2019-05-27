@@ -65,6 +65,13 @@ Node *new_node_for(Node *init, Node *cond, Node *loop, Node *body) {
   return node;
 }
 
+Node *new_node_block(Vector *block) {
+  Node *node = malloc(sizeof(Node));
+  node->ty = ND_BLOCK;
+  node->block = block;
+  return node;
+}
+
 int pos = 0;
 int consume(int ty) {
   Token *tok = tokens->data[pos];
@@ -88,6 +95,13 @@ void program() {
 
 Node *stmt() {
   Node *node;
+
+  if (consume('{')) {
+    Vector *block = new_vector();
+    while (!consume('}'))
+      vec_push(block, stmt());
+    return new_node_block(block);
+  }
 
   if (consume(TK_IF)) {
     if (!consume('('))

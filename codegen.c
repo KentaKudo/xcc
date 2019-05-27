@@ -108,6 +108,15 @@ void gen(Node *node) {
     labelNr++;
     return;
   }
+
+  if (node->ty == ND_BLOCK) {
+    for (int i = 0; i < node->block->len; i++) {
+      gen((Node *)node->block->data[i]);
+      printf("  pop rax\n");
+    }
+    printf("  push rax\n");
+    return;
+  }
   
   // binary operators
   gen(node->lhs);

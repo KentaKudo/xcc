@@ -58,6 +58,7 @@ enum {
   ND_FOR,
   ND_FORINITCOND,
   ND_FORLOOPBODY,
+  ND_BLOCK,
 };
 
 typedef struct Node {
@@ -66,6 +67,7 @@ typedef struct Node {
   struct Node *rhs;
   int val;
   char *name;
+  Vector *block;
 } Node;
 
 // parse.c
@@ -77,6 +79,7 @@ Node *new_node_return(Node *lhs);
 Node *new_node_if(Node *condition, Node *body, Node *alt);
 Node *new_node_while(Node *condition, Node *body);
 Node *new_node_for(Node *init, Node *cond, Node *loop, Node *body);
+Node *new_node_block(Vector *block);
 int consume(int ty);
 void program();
 Node *stmt();
