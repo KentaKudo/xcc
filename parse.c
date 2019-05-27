@@ -49,6 +49,22 @@ Node *new_node_while(Node *condition, Node *body) {
   return node;
 }
 
+Node *new_node_for(Node *init, Node *cond, Node *loop, Node *body) {
+  Node *initcond = malloc(sizeof(Node));
+  initcond->ty = ND_FORINITCOND;
+  initcond->lhs = init;
+  initcond->rhs = cond;
+  Node *loopbody = malloc(sizeof(Node));
+  loopbody->ty = ND_FORLOOPBODY;
+  loopbody->lhs = loop;
+  loopbody->rhs = body;
+  Node *node = malloc(sizeof(Node));
+  node->ty = ND_FOR;
+  node->lhs = initcond;
+  node->rhs = loopbody;
+  return node;
+}
+
 int pos = 0;
 int consume(int ty) {
   Token *tok = tokens->data[pos];
@@ -93,6 +109,28 @@ Node *stmt() {
     if (!consume(')'))
       error("expecting ')': %s", ((Token *)tokens->data[pos])->input);
     return new_node_while(condition, stmt());
+  }
+
+  if (consume(TK_FOR)) {
+    if (!consume('('))
+      error("expecting '(': %s", ((Token *)tokens->data[pos])->input);
+    Node *init = NULL, *cond = NULL, *loop = NULL;
+    if (!consume(';')) {
+      init = expr();
+      if (!consume(';'))
+        error("expecting ';': %s", ((Token *)tokens->data[pos])->input);
+    }
+    if (!consume(';')) {
+      cond = expr();
+      if (!consume(';'))
+        error("expecting ';': %s", ((Token *)tokens->data[pos])->input);
+    }
+    if (!consume(')')) {
+      loop = expr();
+      if (!consume(')'))
+        error("expecting ')': %s", ((Token *)tokens->data[pos])->input);
+    }
+    return new_node_for(init, cond, loop, stmt());
   }
 
   if (consume(TK_RETURN)) {

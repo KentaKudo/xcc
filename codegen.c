@@ -90,6 +90,24 @@ void gen(Node *node) {
     labelNr++;
     return;
   }
+
+  if (node->ty == ND_FOR) {
+    if (node->lhs->lhs) // init
+      gen(node->lhs->lhs);
+    printf(".Lbegin%d:\n", labelNr);
+    if (node->lhs->rhs) // cond
+      gen(node->lhs->rhs);
+    printf("  pop rax\n");
+    printf("  cmp rax, 0\n");
+    printf("  je  .Lend%d\n", labelNr);
+    if (node->rhs->lhs) // loop
+      gen(node->rhs->lhs);
+    gen(node->rhs->rhs); // body
+    printf("  jmp .Lbegin%d\n", labelNr);
+    printf(".Lend%d:\n", labelNr);
+    labelNr++;
+    return;
+  }
   
   // binary operators
   gen(node->lhs);

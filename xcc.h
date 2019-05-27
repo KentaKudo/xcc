@@ -16,6 +16,7 @@ enum {
   TK_IF,        // if
   TK_ELSE,      // else
   TK_WHILE,     // while
+  TK_FOR,       // for
 };
 
 typedef struct {
@@ -54,6 +55,9 @@ enum {
   ND_IFBLOCK,
   ND_IFBODY,
   ND_WHILE,
+  ND_FOR,
+  ND_FORINITCOND,
+  ND_FORLOOPBODY,
 };
 
 typedef struct Node {
@@ -72,6 +76,7 @@ Node *new_node_ident(char *name);
 Node *new_node_return(Node *lhs);
 Node *new_node_if(Node *condition, Node *body, Node *alt);
 Node *new_node_while(Node *condition, Node *body);
+Node *new_node_for(Node *init, Node *cond, Node *loop, Node *body);
 int consume(int ty);
 void program();
 Node *stmt();
