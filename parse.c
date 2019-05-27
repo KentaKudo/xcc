@@ -29,12 +29,16 @@ Node *new_node_return(Node *lhs) {
   return node;
 }
 
-Node *new_node_if(Node *condition, Node *body) {
-  Node *node = malloc(sizeof(Node));
-  node->ty = ND_IF;
-  node->lhs = condition;
-  node->rhs = body;
-  return node;
+Node *new_node_if(Node *condition, Node *ifbody, Node *alt) {
+  Node *body = malloc(sizeof(Node));
+  body->ty = ND_IFBODY;
+  body->lhs = ifbody;
+  body->rhs = alt;
+  Node *block = malloc(sizeof(Node));
+  block->ty = ND_IFBLOCK;
+  block->lhs = condition;
+  block->rhs = body;
+  return block;
 }
 
 int pos = 0;
@@ -68,7 +72,10 @@ Node *stmt() {
     if (!consume(')'))
       error("expecting ')': %s", ((Token *)tokens->data[pos])->input);
     Node *body = stmt();
-    return new_node_if(condition, body);
+    if (consume(TK_ELSE))
+      return new_node_if(condition, body, stmt());
+
+    return new_node_if(condition, body, NULL);
   }
 
   if (consume(TK_RETURN)) {

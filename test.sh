@@ -36,7 +36,7 @@ try 14 "a = 3; b = 5 * 6 - 8; a + b / 2;"
 try 5 "return 5; return 8;"
 try 6 "foo = 1; bar = 2 + 3; return foo + bar;"
 try 6 "foo1 = 1; foo2 = 2 + 3; return foo1 + foo2;"
-try 42 "a = 1; if (a == 1) return 42; return 33;"
-try 33 "a = 0; if (a == 1) return 42; return 33;"
+try 42 "a = 1; if (a == 1) return 42; else return 33;"
+try 33 "a = 0; if (a == 1) return 42; else return 33;"
 
 echo OK

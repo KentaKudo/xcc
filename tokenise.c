@@ -28,6 +28,14 @@ void tokenise(char *p) {
         continue;
     }
 
+    if (strncmp(p, "else", 4) == 0 && !is_alnum(p[4])) {
+        tok->ty = TK_ELSE;
+        tok->input = p;
+        vec_push(tokens, (void *)tok);
+        p += 4;
+        continue;
+    }
+
     if (strncmp(p, "==", 2) == 0) {
       tok->ty = TK_EQ;
       tok->input = "==";

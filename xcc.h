@@ -14,6 +14,7 @@ enum {
   TK_GE,        // >=
   TK_RETURN,    // return
   TK_IF,        // if
+  TK_ELSE,      // else
 };
 
 typedef struct {
@@ -49,7 +50,8 @@ enum {
   ND_LE,
   ND_GE,
   ND_RETURN,
-  ND_IF,
+  ND_IFBLOCK,
+  ND_IFBODY,
 };
 
 typedef struct Node {
@@ -66,7 +68,7 @@ Node *new_node(int ty, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
 Node *new_node_ident(char *name);
 Node *new_node_return(Node *lhs);
-Node *new_node_if(Node *condition, Node *body);
+Node *new_node_if(Node *condition, Node *body, Node *alt);
 int consume(int ty);
 void program();
 Node *stmt();

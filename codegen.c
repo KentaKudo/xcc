@@ -50,15 +50,31 @@ void gen(Node *node) {
     return;
   }
 
-  if (node->ty == ND_IF) {
+  if (node->ty == ND_IFBLOCK) {
     gen(node->lhs);
 
     printf("  pop rax\n");
     printf("  cmp rax, 0\n");
-    printf("  je  .Lend%d\n", labelNr);
     gen(node->rhs);
-    printf(".Lend%d:\n", labelNr);
-    labelNr++;
+    return;
+  }
+
+  if (node->ty == ND_IFBODY) {
+    if (node->rhs == NULL) { // if
+      printf("  je  .Lend%d\n", labelNr);
+      gen(node->lhs);
+      printf(".Lend%d:\n", labelNr);
+      labelNr++;
+    } else { // if-else
+      int elseLabel = labelNr++;
+      int endLabel = labelNr++;
+      printf("  je  .Lelse%d\n", elseLabel);
+      gen(node->lhs);
+      printf("  jmp .Lend%d\n", endLabel);
+      printf(".Lelse%d:\n", elseLabel);
+      gen(node->rhs);
+      printf(".Lend%d:\n", endLabel);
+    }
     return;
   }
   
