@@ -21,19 +21,27 @@ void tokenise(char *p) {
     }
 
     if (strncmp(p, "if", 2) == 0 && !is_alnum(p[2])) {
-        tok->ty = TK_IF;
-        tok->input = p;
-        vec_push(tokens, (void *)tok);
-        p += 2;
-        continue;
+      tok->ty = TK_IF;
+      tok->input = p;
+      vec_push(tokens, (void *)tok);
+      p += 2;
+      continue;
     }
 
     if (strncmp(p, "else", 4) == 0 && !is_alnum(p[4])) {
-        tok->ty = TK_ELSE;
-        tok->input = p;
-        vec_push(tokens, (void *)tok);
-        p += 4;
-        continue;
+      tok->ty = TK_ELSE;
+      tok->input = p;
+      vec_push(tokens, (void *)tok);
+      p += 4;
+      continue;
+    }
+
+    if (strncmp(p, "while", 5) == 0 && !is_alnum(p[5])) {
+      tok->ty = TK_WHILE;
+      tok->input = p;
+      vec_push(tokens, (void *)tok);
+      p += 5;
+      continue;
     }
 
     if (strncmp(p, "==", 2) == 0) {
