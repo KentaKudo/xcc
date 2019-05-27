@@ -20,6 +20,14 @@ void tokenise(char *p) {
       continue;
     }
 
+    if (strncmp(p, "if", 2) == 0 && !is_alnum(p[2])) {
+        tok->ty = TK_IF;
+        tok->input = p;
+        vec_push(tokens, (void *)tok);
+        p += 2;
+        continue;
+    }
+
     if (strncmp(p, "==", 2) == 0) {
       tok->ty = TK_EQ;
       tok->input = "==";

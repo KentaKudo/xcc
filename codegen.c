@@ -1,5 +1,7 @@
 #include "xcc.h"
 
+int labelNr = 0;
+
 void gen_lval(Node *node) {
   if (node->ty != ND_IDENT)
     error("expecting identifier");
@@ -48,6 +50,19 @@ void gen(Node *node) {
     return;
   }
 
+  if (node->ty == ND_IF) {
+    gen(node->lhs);
+
+    printf("  pop rax\n");
+    printf("  cmp rax, 0\n");
+    printf("  je  .Lend%d\n", labelNr);
+    gen(node->rhs);
+    printf(".Lend%d:\n", labelNr);
+    labelNr++;
+    return;
+  }
+  
+  // binary operators
   gen(node->lhs);
   gen(node->rhs);
 

@@ -29,6 +29,14 @@ Node *new_node_return(Node *lhs) {
   return node;
 }
 
+Node *new_node_if(Node *condition, Node *body) {
+  Node *node = malloc(sizeof(Node));
+  node->ty = ND_IF;
+  node->lhs = condition;
+  node->rhs = body;
+  return node;
+}
+
 int pos = 0;
 int consume(int ty) {
   Token *tok = tokens->data[pos];
@@ -52,6 +60,16 @@ void program() {
 
 Node *stmt() {
   Node *node;
+
+  if (consume(TK_IF)) {
+    if (!consume('('))
+      error("expecting '(': %s", ((Token *)tokens->data[pos])->input);
+    Node *condition = expr();
+    if (!consume(')'))
+      error("expecting ')': %s", ((Token *)tokens->data[pos])->input);
+    Node *body = stmt();
+    return new_node_if(condition, body);
+  }
 
   if (consume(TK_RETURN)) {
     node = new_node_return(expr());

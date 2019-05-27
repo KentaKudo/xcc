@@ -13,6 +13,7 @@ enum {
   TK_LE,        // <=
   TK_GE,        // >=
   TK_RETURN,    // return
+  TK_IF,        // if
 };
 
 typedef struct {
@@ -31,6 +32,7 @@ extern Vector *code;
 extern int pos;
 extern int varCnt;
 extern Map *offsets;
+extern int labelNr;
 
 typedef struct {
   int ty;      // type
@@ -47,6 +49,7 @@ enum {
   ND_LE,
   ND_GE,
   ND_RETURN,
+  ND_IF,
 };
 
 typedef struct Node {
@@ -62,6 +65,8 @@ void tokenise(char *p);
 Node *new_node(int ty, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
 Node *new_node_ident(char *name);
+Node *new_node_return(Node *lhs);
+Node *new_node_if(Node *condition, Node *body);
 int consume(int ty);
 void program();
 Node *stmt();
