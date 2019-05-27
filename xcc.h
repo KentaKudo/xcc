@@ -59,6 +59,7 @@ enum {
   ND_FORINITCOND,
   ND_FORLOOPBODY,
   ND_BLOCK,
+  ND_FCALL,
 };
 
 typedef struct Node {
@@ -80,6 +81,7 @@ Node *new_node_if(Node *condition, Node *body, Node *alt);
 Node *new_node_while(Node *condition, Node *body);
 Node *new_node_for(Node *init, Node *cond, Node *loop, Node *body);
 Node *new_node_block(Vector *block);
+Node *new_node_fcall(char *name);
 int consume(int ty);
 void program();
 Node *stmt();

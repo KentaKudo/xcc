@@ -72,6 +72,13 @@ Node *new_node_block(Vector *block) {
   return node;
 }
 
+Node *new_node_fcall(char *name) {
+  Node *node = malloc(sizeof(Node));
+  node->ty = ND_FCALL;
+  node->name = name;
+  return node;
+}
+
 int pos = 0;
 int consume(int ty) {
   Token *tok = tokens->data[pos];
@@ -235,18 +242,18 @@ Node *unary() {
 }
 
 Node *term() {
-  if (consume('(')) {
-    Node *node = expr();
-    if (!consume(')'))
-      error("expecting ')': %s", ((Token *)tokens->data[pos])->input);
-    return node;
-  }
-
   if (((Token *)tokens->data[pos])->ty == TK_NUM)
     return new_node_num(((Token *)tokens->data[pos++])->val);
 
   if (((Token *)tokens->data[pos])->ty == TK_IDENT) {
     char *name = ((Token *)tokens->data[pos++])->name;
+    
+    if (consume('(')) {
+      if (!consume(')'))
+        error("expecting ')': %s", ((Token *)tokens->data[pos])->input);
+      return new_node_fcall(name);
+    }
+
     void *val = map_get(offsets, name);
     if (val == NULL) {
       map_put(offsets, name, varCnt * 8);
@@ -254,6 +261,13 @@ Node *term() {
     }
 
     return new_node_ident(name);
+  }
+  
+  if (consume('(')) {
+    Node *node = expr();
+    if (!consume(')'))
+      error("expecting ')': %s", ((Token *)tokens->data[pos])->input);
+    return node;
   }
   
   error("expecting a number or '(': %s", ((Token *)tokens->data[pos])->input);

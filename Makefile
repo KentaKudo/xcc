@@ -9,7 +9,8 @@ xcc: $(OBJS)
 $(OBJS): xcc.h
 
 .PHONY: test
-test: xcc test.sh
+test: xcc test.sh test/foo.c
+	@gcc -c -o foo.o test/foo.c
 	./xcc -test
 	./test.sh
 

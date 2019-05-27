@@ -117,6 +117,12 @@ void gen(Node *node) {
     printf("  push rax\n");
     return;
   }
+
+  if (node->ty == ND_FCALL) {
+    printf("  call %s\n", node->name);
+    printf("  push rax\n");
+    return;
+  }
   
   // binary operators
   gen(node->lhs);
