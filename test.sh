@@ -47,5 +47,6 @@ try 33 "a = 0; if (a == 1) { return 42; } else { return 33; }"
 try 5 "a = 0; while (a < 5) { a = a + 1; } return a;"
 try 5 "a = 0; for (; a < 5;) { a = a + 1; } return a;"
 try 42 "a = foo(); return a;"
+try 42 "a = bar(24, 18); return a;"
 
 echo OK

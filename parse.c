@@ -72,10 +72,11 @@ Node *new_node_block(Vector *block) {
   return node;
 }
 
-Node *new_node_fcall(char *name) {
+Node *new_node_fcall(char *name, Vector *args) {
   Node *node = malloc(sizeof(Node));
   node->ty = ND_FCALL;
   node->name = name;
+  node->args = args;
   return node;
 }
 
@@ -248,10 +249,16 @@ Node *term() {
   if (((Token *)tokens->data[pos])->ty == TK_IDENT) {
     char *name = ((Token *)tokens->data[pos++])->name;
     
-    if (consume('(')) {
-      if (!consume(')'))
-        error("expecting ')': %s", ((Token *)tokens->data[pos])->input);
-      return new_node_fcall(name);
+    if (consume('(')) { // function call
+      Vector *args = new_vector();
+      if (!consume(')')) {
+        vec_push(args, expr());
+        while (consume(','))
+          vec_push(args, expr());
+        if (!consume(')'))
+          error("expecting ')': %s", ((Token *)tokens->data[pos])->input);
+      }
+      return new_node_fcall(name, args);
     }
 
     void *val = map_get(offsets, name);

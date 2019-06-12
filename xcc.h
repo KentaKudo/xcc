@@ -69,6 +69,7 @@ typedef struct Node {
   int val;
   char *name;
   Vector *block;
+  Vector *args;
 } Node;
 
 // parse.c
@@ -81,7 +82,7 @@ Node *new_node_if(Node *condition, Node *body, Node *alt);
 Node *new_node_while(Node *condition, Node *body);
 Node *new_node_for(Node *init, Node *cond, Node *loop, Node *body);
 Node *new_node_block(Vector *block);
-Node *new_node_fcall(char *name);
+Node *new_node_fcall(char *name, Vector *args);
 int consume(int ty);
 void program();
 Node *stmt();
